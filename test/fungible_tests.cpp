@@ -234,6 +234,27 @@ TEST(FungibleTests, ArrayVector) {
   EXPECT_FALSE((IsFungible<IntVector, FloatArray1>::value));
   EXPECT_FALSE((IsFungible<IntVector, FloatArray2>::value));
 
+  using IntList = std::list<int>;
+  using FloatList = std::list<float>;
+
+  // Test combinations of T={int,float}.
+  EXPECT_TRUE((IsFungible<IntList, IntList>::value));
+  EXPECT_TRUE((IsFungible<FloatList, FloatList>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatList>::value));
+  EXPECT_FALSE((IsFungible<FloatList, IntList>::value));
+
+  // Test combinations of std::vector and std::list.
+  EXPECT_TRUE((IsFungible<IntList, IntVector>::value));
+  EXPECT_TRUE((IsFungible<FloatList, FloatVector>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatVector>::value));
+  EXPECT_FALSE((IsFungible<FloatList, IntVector>::value));
+
+  // Test combinations of std::array and std::list.
+  EXPECT_TRUE((IsFungible<IntList, IntArray1>::value));
+  EXPECT_TRUE((IsFungible<IntList, IntArray2>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatArray1>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatArray2>::value));
+
   using IntCArray1 = int[1];
   using IntCArray2 = int[2];
   using FloatCArray1 = float[1];
@@ -253,6 +274,13 @@ TEST(FungibleTests, ArrayVector) {
   EXPECT_FALSE((IsFungible<IntVector, FloatCArray1>::value));
   EXPECT_FALSE((IsFungible<IntVector, FloatCArray2>::value));
 
+  // Test combinations of std::list and C-style arrays.
+  EXPECT_TRUE((IsFungible<IntList, IntCArray1>::value));
+  EXPECT_TRUE((IsFungible<IntList, IntCArray2>::value));
+  EXPECT_TRUE((IsFungible<FloatList, FloatCArray1>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatCArray1>::value));
+  EXPECT_FALSE((IsFungible<IntList, FloatCArray2>::value));
+
   // Test combinations of std::array and C-style arrays.
   EXPECT_TRUE((IsFungible<IntArray1, IntCArray1>::value));
   EXPECT_TRUE((IsFungible<IntArray2, IntCArray2>::value));
@@ -260,6 +288,9 @@ TEST(FungibleTests, ArrayVector) {
   EXPECT_TRUE((IsFungible<FloatArray1, FloatCArray1>::value));
   EXPECT_FALSE((IsFungible<IntArray1, FloatCArray1>::value));
   EXPECT_FALSE((IsFungible<IntArray2, FloatCArray2>::value));
+
+  using IntList = std::list<int>;
+  using FloatList = std::list<float>;
 }
 
 TEST(FungibleTests, Map) {

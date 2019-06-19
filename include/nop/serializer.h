@@ -21,6 +21,7 @@
 #include <nop/base/encoding.h>
 #include <nop/base/enum.h>
 #include <nop/base/handle.h>
+#include <nop/base/list.h>
 #include <nop/base/map.h>
 #include <nop/base/members.h>
 #include <nop/base/optional.h>
