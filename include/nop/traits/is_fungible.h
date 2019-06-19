@@ -20,9 +20,11 @@
 #include <array>
 #include <list>
 #include <map>
+#include <set>
 #include <tuple>
 #include <type_traits>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -117,6 +119,33 @@ struct IsFungible<std::unordered_map<KeyA, ValueA, AnyA...>,
                   std::map<KeyB, ValueB, AnyB...>>
     : And<IsFungible<std::decay_t<KeyA>, std::decay_t<KeyB>>,
           IsFungible<std::decay_t<ValueA>, std::decay_t<ValueB>>> {};
+
+// Compares two std::sets to see if the element types are fungible.
+template <typename A, typename B,
+          typename... AnyA, typename... AnyB>
+struct IsFungible<std::set<A, AnyA...>,
+                  std::set<B, AnyB...>>
+    : IsFungible<std::decay_t<A>, std::decay_t<B>> {};
+
+// Compares two std::unordered_sets to see if the element types are fungible.
+template <typename A, typename B,
+          typename... AnyA, typename... AnyB>
+struct IsFungible<std::unordered_set<A, AnyA...>,
+                  std::unordered_set<B, AnyB...>>
+    : IsFungible<std::decay_t<A>, std::decay_t<B>> {};
+
+// Compares a std::set and a std::unordered_set to see if the element types are
+// fungible.
+template <typename A, typename B,
+          typename... AnyA, typename... AnyB>
+struct IsFungible<std::set<A, AnyA...>,
+                  std::unordered_set<B, AnyB...>>
+    : IsFungible<std::decay_t<A>, std::decay_t<B>> {};
+template <typename A, typename B,
+          typename... AnyA, typename... AnyB>
+struct IsFungible<std::unordered_set<A, AnyA...>,
+                  std::set<B, AnyB...>>
+    : IsFungible<std::decay_t<A>, std::decay_t<B>> {};
 
 // Compares two std::tuples to see if the corresponding elements are
 // fungible. Fungible tuples must have the same number of elements.

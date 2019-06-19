@@ -15,6 +15,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <functional> /* hash */
 
 #include <nop/base/logical_buffer.h>
 #include <nop/structure.h>
@@ -361,6 +362,55 @@ TEST(FungibleTests, MapUnorderedMap) {
                            std::map<float, IntVector>>::value));
   EXPECT_FALSE((IsFungible<std::unordered_map<int, IntArray>,
                            std::map<float, FloatVector>>::value));
+}
+
+TEST(FungibleTests, Set) {
+  using IntArray = std::array<int, 1>;
+  using IntVector = std::vector<int>;
+  using FloatVector = std::vector<float>;
+
+  EXPECT_TRUE(
+      (IsFungible<std::set<int>, std::set<int>>::value));
+  EXPECT_TRUE(
+      (IsFungible<std::set<IntArray>, std::set<IntArray>>::value));
+  EXPECT_TRUE(
+      (IsFungible<std::set<IntArray>, std::set<IntVector>>::value));
+  EXPECT_FALSE(
+      (IsFungible<std::set<IntArray>, std::set<FloatVector>>::value));
+  EXPECT_FALSE(
+      (IsFungible<std::set<int>, std::set<float>>::value));
+  EXPECT_FALSE(
+      (IsFungible<std::set<float>, std::set<int>>::value));
+}
+
+TEST(FungibleTests, UnorderedSet) {
+  EXPECT_TRUE((IsFungible<std::unordered_set<int>,
+                          std::unordered_set<int>>::value));
+  EXPECT_FALSE((IsFungible<std::unordered_set<int>,
+                           std::unordered_set<float>>::value));
+  EXPECT_FALSE((IsFungible<std::unordered_set<float>,
+                           std::unordered_set<int>>::value));
+}
+
+TEST(FungibleTests, SetUnorderedSet) {
+
+  EXPECT_TRUE((IsFungible<std::set<int>,
+                          std::unordered_set<int>>::value));
+  EXPECT_TRUE((IsFungible<std::set<float>,
+                          std::unordered_set<float>>::value));
+  EXPECT_FALSE((IsFungible<std::set<int>,
+                           std::unordered_set<float>>::value));
+  EXPECT_FALSE((IsFungible<std::set<float>,
+                           std::unordered_set<int>>::value));
+
+  EXPECT_TRUE((IsFungible<std::unordered_set<int>,
+                          std::set<int>>::value));
+  EXPECT_TRUE((IsFungible<std::unordered_set<float>,
+                          std::set<float>>::value));
+  EXPECT_FALSE((IsFungible<std::unordered_set<int>,
+                           std::set<float>>::value));
+  EXPECT_FALSE((IsFungible<std::unordered_set<float>,
+                           std::set<int>>::value));
 }
 
 TEST(FungibleTests, Optional) {

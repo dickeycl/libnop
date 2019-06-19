@@ -29,6 +29,7 @@
 #include <nop/base/reference_wrapper.h>
 #include <nop/base/result.h>
 #include <nop/base/serializer.h>
+#include <nop/base/set.h>
 #include <nop/base/string.h>
 #include <nop/base/table.h>
 #include <nop/base/tuple.h>
