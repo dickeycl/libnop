@@ -185,4 +185,4 @@ struct Encoding<std::list<T, Allocator>, EnableIfIntegral<T>>
 
 }  // namespace nop
 
-#endif  // LIBNOP_INCLUDE_NOP_BASE_VECTOR_H_
+#endif  // LIBNOP_INCLUDE_NOP_BASE_LIST_H_
