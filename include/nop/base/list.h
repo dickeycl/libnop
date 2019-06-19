@@ -141,7 +141,7 @@ struct Encoding<std::list<T, Allocator>, EnableIfIntegral<T>>
       return status;
 
     for (const T& element : value) {
-      status = Encoding<T>::Write(element, writer);
+      status = writer->Write(&element, &element + 1);
       if (!status)
         return status;
     }
@@ -150,7 +150,7 @@ struct Encoding<std::list<T, Allocator>, EnableIfIntegral<T>>
   }
 
   template <typename Reader>
-  static Status<void> ReadPayload(EncodingByte /*prefix*/,
+  static constexpr Status<void> ReadPayload(EncodingByte /*prefix*/,
                                             Type* value, Reader* reader) {
     SizeType size = 0;
     auto status = Encoding<SizeType>::Read(&size, reader);
@@ -160,11 +160,19 @@ struct Encoding<std::list<T, Allocator>, EnableIfIntegral<T>>
     if (size % sizeof(T) != 0)
       return ErrorStatus::InvalidContainerLength;
 
+    const SizeType length = size / sizeof(T);
+
+    // Make sure the reader has enough data to fulfill the requested size as a
+    // defense against abusive or erroneous binary container sizes.
+    status = reader->Ensure(length);
+    if (!status)
+      return status;
+
     // Clear the list to make sure elements are inserted in the correct order.
     value->clear();
-    for (SizeType i = 0; i < size; i++) {
+    for (SizeType i = 0; i < length; i++) {
       T element;
-      status = Encoding<T>::Read(&element, reader);
+      status = reader->Read(&element, &element + 1);
       if (!status)
         return status;
 
